@@ -1,12 +1,12 @@
 #include "QSftpFileEngine.h"
 #include "QSftpSession.h"
-#include <QAbstractFileEngineIterator>
+#include "QSftpEntryIterator.h"
 #include <QDateTime>
-#include <libssh/libssh.h>
+#include <libssh/sftp.h>
 
 QMap<QString, QSharedPointer<QSftpSession> > QSftpFileEngine::sessions;
 
-QSftpFileEngine::QSftpFileEngine(const QSharedPointer<QSftpSession>& host, const QString& fileName) : QAbstractFileEngine() {
+QSftpFileEngine::QSftpFileEngine(const QSharedPointer<QSftpSession>& _host, const QString& fileName) : QAbstractFileEngine(), host(host), path(fileName.toStdString()) {
   if(host->errorCode() != SSH_NO_ERROR)
     setError(QFile::ResourceError, host->getSshError());
   if(!host->startSftp())
@@ -24,16 +24,33 @@ QStringList QSftpFileEngine::entryList(QDir::Filters, const QStringList& fileNam
 
 QAbstractFileEngine::Iterator* QSftpFileEngine::beginEntryList(QDir::Filters filters,
     const QStringList& filterNames) {
-  return NULL;
+  return new QSftpEntryIterator(host, QString::fromStdString(path), filters, filterNames);
 }
 
 QAbstractFileEngine::FileFlags QSftpFileEngine::fileFlags(
     QAbstractFileEngine::FileFlags flags) const {
-  return QAbstractFileEngine::FileFlags();
+  sftp_attributes attrs = sftp_lstat(host->sftpSession(), path.c_str());
+  flags = fileFlags(attrs, flags);
+  sftp_attributes_free(attrs);
+  return flags;
 }
 
 QString QSftpFileEngine::fileName(QAbstractFileEngine::FileName file) const {
-  return QString();
+  sftp_attributes attrs = sftp_lstat(host->sftpSession(), path.c_str());
+  QString ret;
+  switch(file) {
+  case QAbstractFileEngine::DefaultName:
+  case QAbstractFileEngine::BaseName:
+  case QAbstractFileEngine::PathName:
+  case QAbstractFileEngine::AbsoluteName:
+  case QAbstractFileEngine::AbsolutePathName:
+  case QAbstractFileEngine::LinkName:
+  case QAbstractFileEngine::CanonicalName:
+  case QAbstractFileEngine::CanonicalPathName:
+  case QAbstractFileEngine::BundleName: break;
+  }
+  sftp_attributes_free(attrs);
+  return ret;
 }
 
 QDateTime QSftpFileEngine::fileTime(QAbstractFileEngine::FileTime time) const {
@@ -81,3 +98,6 @@ void QSftpFileEngine::parseFileName(const QString& fileName, QString& user, QStr
     user = host_str.section('@', 0, 0);
 }
 
+QAbstractFileEngine::FileFlags QSftpFileEngine::fileFlags(sftp_attributes_struct* attrs, QAbstractFileEngine::FileFlags flags) {
+  return QAbstractFileEngine::FileFlags();
+}

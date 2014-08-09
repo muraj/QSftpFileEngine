@@ -22,7 +22,7 @@ static int qlock_init(void** lock) {
   return (*lock == 0);
 }
 
-static int qlock_destory(void** lock) {
+static int qlock_destroy(void** lock) {
   if(!lock || !*lock) return 1;
   QMutex* mutex = static_cast<QMutex*>(*lock);
   delete mutex;
@@ -48,11 +48,24 @@ static unsigned long qlock_threadid() {
   return (unsigned long)(QThread::currentThreadId());
 }
 
+static const char qthread_cbs_type[] = "qt";
+static ssh_threads_callbacks_struct qthread_cbs;
 
 QSftpFileEngineHandler::QSftpFileEngineHandler(QSftpPromptCallback cb) 
 : prompt(cb ? cb : terminal_prompt) {
-  // May have to replace on windows with qt call backs...
+  // Setup libssh's threading library so we don't need to manage it
+  // Note: May need to use qt thread handling on windows...
+#if 0
+  qthread_cbs.type = qthread_cbs_type;
+  qthread_cbs.mutex_init = &qlock_init;
+  qthread_cbs.mutex_destroy = &qlock_destroy;
+  qthread_cbs.mutex_lock = &qlock_lock;
+  qthread_cbs.mutex_unlock = &qlock_unlock;
+  qthread_cbs.thread_id = &qlock_threadid;
+  ssh_threads_set_callbacks(&qthread_cbs);
+#else
   ssh_threads_set_callbacks(ssh_threads_get_pthread());
+#endif
   ssh_init();
 }
 

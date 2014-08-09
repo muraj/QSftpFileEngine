@@ -6,6 +6,7 @@
 #include <QSharedPointer>
 
 class QSftpSession;
+struct sftp_attributes_struct;
 
 class QSftpFileEngine : public QAbstractFileEngine {
 public:
@@ -49,9 +50,11 @@ public:
   static QSharedPointer<QSftpSession> session(const QString& user, const QString& host);
   static void closeSession(const QString& host);
   static void parseFileName(const QString& fileName, QString& user, QString& host, QString& path);
+  static QAbstractFileEngine::FileFlags fileFlags(sftp_attributes_struct* attrs, QAbstractFileEngine::FileFlags flags = QAbstractFileEngine::FileInfoAll);
 
 private:
-  QString lastError;
+  QSharedPointer<QSftpSession> host;
+  std::string path;
   static QMap<QString, QSharedPointer<QSftpSession> > sessions;
 };
 
