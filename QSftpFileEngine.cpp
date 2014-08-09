@@ -1,8 +1,11 @@
 #include "QSftpFileEngine.h"
+#include "QSftpSession.h"
 #include <QAbstractFileEngineIterator>
 #include <QDateTime>
 
-QSftpFileEngine::QSftpFileEngine(const QString& host, const QString& fileName) : QAbstractFileEngine() {
+QMap<QString, QSharedPointer<QSftpSession> > QSftpFileEngine::sessions;
+
+QSftpFileEngine::QSftpFileEngine(const QSharedPointer<QSftpSession>& host, const QString& fileName) : QAbstractFileEngine() {
 
 }
 
@@ -30,6 +33,12 @@ QString QSftpFileEngine::fileName(QAbstractFileEngine::FileName file) const {
 }
 
 QDateTime QSftpFileEngine::fileTime(QAbstractFileEngine::FileTime time) const {
+  switch(time) {
+  case QAbstractFileEngine::CreationTime:
+  case QAbstractFileEngine::ModificationTime:
+  case QAbstractFileEngine::AccessTime:
+    break;
+  }
   return QDateTime();
 }
 
@@ -39,4 +48,16 @@ bool QSftpFileEngine::supportsExtension(QAbstractFileEngine::Extension extension
 
 bool QSftpFileEngine::isRelativePath() const {
   return false;
+}
+
+QSharedPointer<QSftpSession> QSftpFileEngine::session(const QString& host) {
+  QMap<QString, QSharedPointer<QSftpSession> >::iterator i = sessions.find(host);
+  if(i != sessions.end()) return i.value();
+  QSharedPointer<QSftpSession> ret(new QSftpSession(host));
+  sessions[host] = ret;
+  return ret;
+}
+
+void QSftpFileEngine::closeSession(const QString& host) {
+  sessions.remove(host);
 }

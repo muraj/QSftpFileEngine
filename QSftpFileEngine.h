@@ -2,10 +2,14 @@
 #define QSFTPFILEENGINE_H
 
 #include <QAbstractFileEngine>
+#include <QMap>
+#include <QSharedPointer>
+
+class QSftpSession;
 
 class QSftpFileEngine : public QAbstractFileEngine {
 public:
-  QSftpFileEngine(const QString& host, const QString& fileName);
+  QSftpFileEngine(const QSharedPointer<QSftpSession>& _ssh, const QString& fileName);
   virtual ~QSftpFileEngine();
   bool caseSensitive() const { return true; }
   QStringList entryList(QDir::Filters, const QStringList& fileName) const;
@@ -41,6 +45,12 @@ public:
   //qint64 size() const;
   bool supportsExtension(QAbstractFileEngine::Extension extension) const;
   //qint64 write(const char* data, qint64 len);
+
+  static QSharedPointer<QSftpSession> session(const QString& host);
+  static void closeSession(const QString& host);
+
+private:
+  static QMap<QString, QSharedPointer<QSftpSession> > sessions;
 };
 
 #endif // QSFTPFILEENGINE_H

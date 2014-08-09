@@ -25,6 +25,7 @@ set(qsftp_HDRS
   QSftpFileEngineHandler.h
   QSftpFileEngine.h
   QSftpEntryIterator.h
+  QSftpSession.h
 )
 
 set(qsftp_SRCS
@@ -34,6 +35,7 @@ set(qsftp_SRCS
   QSftpFileEngineHandler.cpp
   QSftpFileEngine.cpp
   QSftpEntryIterator.cpp
+  QSftpSession.cpp
 )
 
 QT4_WRAP_CPP(qsftp_MOC_SRCS ${qsftp_MOC_HDRS})
