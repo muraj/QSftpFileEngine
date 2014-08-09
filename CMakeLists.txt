@@ -2,6 +2,12 @@ cmake_minimum_required(VERSION 2.8.12)
 
 project(qsftp CXX)
 
+include(CheckIncludeFileCXX)
+CHECK_INCLUDE_FILE_CXX(cstdlib HAVE_CSTDLIB)
+if(NOT HAVE_CSTDLIB)
+  message(FATAL_ERROR "<cstdlib> not found")
+endif()
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/Modules)
 
 find_package(Qt4 REQUIRED QtCore QtGui)

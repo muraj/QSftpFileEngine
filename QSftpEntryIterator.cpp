@@ -1,7 +1,7 @@
 #include "QSftpEntryIterator.h"
 
-QSftpEntryIterator::QSftpEntryIterator(QDir::Filters filters, const QStringList& nameFilter) 
-  : QAbstractFileEngineIterator(filters, nameFilter) {
+QSftpEntryIterator::QSftpEntryIterator(QSharedPointer<QSftpSession> ssh, QDir::Filters filters, const QStringList& nameFilter) 
+  : QAbstractFileEngineIterator(filters, nameFilter), session(ssh) {
 
 }
 

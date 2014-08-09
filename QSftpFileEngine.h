@@ -46,10 +46,12 @@ public:
   bool supportsExtension(QAbstractFileEngine::Extension extension) const;
   //qint64 write(const char* data, qint64 len);
 
-  static QSharedPointer<QSftpSession> session(const QString& host);
+  static QSharedPointer<QSftpSession> session(const QString& user, const QString& host);
   static void closeSession(const QString& host);
+  static void parseFileName(const QString& fileName, QString& user, QString& host, QString& path);
 
 private:
+  QString lastError;
   static QMap<QString, QSharedPointer<QSftpSession> > sessions;
 };
 
