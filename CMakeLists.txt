@@ -19,15 +19,25 @@ cmake_minimum_required(VERSION 2.8.12)
 
 project(qsftpfs CXX)
 
+
 include(CheckIncludeFileCXX)
 CHECK_INCLUDE_FILE_CXX(cstdlib HAVE_CSTDLIB)
 if(NOT HAVE_CSTDLIB)
   message(FATAL_ERROR "<cstdlib> not found")
 endif()
 
+option(BUILD_EXAMPLES "Enable building of examples" ON)
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/Modules)
 
-find_package(Qt4 REQUIRED QtCore QtGui)
+set(QT_DONT_USE_QTCORE FALSE)
+if(NOT BUILD_EXAMPLES)
+  set(QT_DONT_USE_QTGUI TRUE)
+else()
+  set(QT_DONT_USE_QTGUI FALSE)
+endif()
+
+find_package(Qt4 4.7 REQUIRED)
 include(${QT_USE_FILE})
 
 find_package(LIBSSH REQUIRED)
@@ -36,7 +46,6 @@ add_definitions(${LIBSSH_DEFINITIONS})
 
 add_subdirectory(src)
 
-option(BUILD_EXAMPLES "Enable building of examples" ON)
 if(BUILD_EXAMPLES)
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
   include_directories(${CMAKE_CURRENT_BINARY_DIR}/src)

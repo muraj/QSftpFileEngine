@@ -43,12 +43,13 @@ add_library(qsftpfs_obj OBJECT ${qsftpfs_SRCS})
 
 add_library(qsftpfss STATIC $<TARGET_OBJECTS:qsftpfs_obj>)
 add_library(qsftpfs SHARED ${qsftpfs_SRCS})
+target_link_libraries(qsftpfs ${LIBSSH_LIBRARIES} ${QT_QTCORE_LIBRARY})
 
 set_target_properties(qsftpfss PROPERTIES COMPILE_FLAGS -DQSFTP_STATIC_DEFINE)
 
 generate_export_header(qsftpfs ${NO_BUILD_DEPRECATED} BASE_NAME QSFTP)
 
-install(TARGETS qsftpfs qsftpss
+install(TARGETS qsftpfs qsftpfss
     RUNTIME DESTINATION bin
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib)
