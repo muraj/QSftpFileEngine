@@ -19,6 +19,16 @@ cmake_minimum_required(VERSION 2.8.12)
 
 project(qsftpfs CXX)
 
+find_package(Git)
+if(GIT_FOUND)
+  execute_process(COMMAND ${GIT_EXECUTABLE} describe --tags --dirty=M
+                  OUTPUT_VARIABLE qsftpfs_TAG_STRING OUTPUT_QUIET ERROR_QUIET)
+  string(REGEX REPLACE "^v([0-9]+).[0-9]+.[0-9]+.*" "\\1" qsftpfs_VERSION_MAJOR "${qsftpfs_TAG_STRING}")
+  string(REGEX REPLACE "^v[0-9]+.([0-9]+).[0-9]+.*" "\\1" qsftpfs_VERSION_MINOR "${qsftpfs_TAG_STRING}")
+  string(REGEX REPLACE "^v[0-9]+.[0-9]+.([0-9]+).*" "\\1" qsftpfs_VERSION_PATCH "${qsftpfs_TAG_STRING}")
+  execute_process(COMMAND ${GIT_EXECUTABLE} rev-parse --short --verify HEAD
+                  OUTPUT_VARIABLE qsftpfs_VERSION_SHA1)
+endif()
 
 include(CheckIncludeFileCXX)
 CHECK_INCLUDE_FILE_CXX(cstdlib HAVE_CSTDLIB)
