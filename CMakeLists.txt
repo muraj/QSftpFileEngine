@@ -1,3 +1,20 @@
+# vim: set filetype=cmake:expandtab:tabstop=2
+#  Copyright 2014 Cory Perry
+#  This file is part of QSftpFileEngine.
+#
+#  QSftpFileEngine is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU Lesser General Public License as published by
+#  the Free Software Foundation, either version 3 of the License, or
+#  (at your option) any later version.
+#
+#  QSftpFileEngine is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU Lesser General Public License for more details.
+#
+#  You should have received a copy of the GNU Lesser General Public License
+#  along with QSftpFileEngine.  If not, see <http://www.gnu.org/licenses/>.
+
 cmake_minimum_required(VERSION 2.8.12)
 
 project(qsftp CXX)
@@ -14,7 +31,7 @@ find_package(Qt4 REQUIRED QtCore QtGui)
 include(${QT_USE_FILE})
 include_directories(${PROJECT_BINARY_DIR})
 
-find_package(LIBSSH REQUIRED COMPONENTS threads)
+find_package(LIBSSH REQUIRED OPTIONAL_COMPONENTS threads)
 include_directories(${LIBSSH_INCLUDE_DIRS})
 
 set(qsftp_UI
