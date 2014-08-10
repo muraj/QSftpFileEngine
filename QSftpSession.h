@@ -6,6 +6,7 @@
 struct sftp_session_struct;
 struct ssh_session_struct;
 class QString;
+class QMutex;
 
 class QSftpSession {
 public:
@@ -17,10 +18,12 @@ public:
   int errorCode() const;
   QString getSshError() const;
   QString getSftpError() const;
+  QMutex* mutex() const { return _mutex; }
   sftp_session_struct* sftpSession() { return sftp; }
   ssh_session_struct* sshSession() { return ssh; }
 private:
   bool authed;
+  QMutex* _mutex;
   sftp_session_struct* sftp;
   ssh_session_struct* ssh;
 };

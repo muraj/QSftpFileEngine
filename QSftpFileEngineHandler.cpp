@@ -4,6 +4,7 @@
 
 #include <QThread>
 #include <QMutex>
+#include <QDebug>
 
 #include <libssh/libssh.h>
 #include <libssh/callbacks.h>
@@ -53,9 +54,10 @@ static ssh_threads_callbacks_struct qthread_cbs;
 
 QSftpFileEngineHandler::QSftpFileEngineHandler(QSftpPromptCallback cb) 
 : prompt(cb ? cb : terminal_prompt) {
+#if 0   // Doesn't seem to want to work
   // Setup libssh's threading library so we don't need to manage it
   // Note: May need to use qt thread handling on windows...
-#if 0
+#if 1
   qthread_cbs.type = qthread_cbs_type;
   qthread_cbs.mutex_init = &qlock_init;
   qthread_cbs.mutex_destroy = &qlock_destroy;
@@ -65,6 +67,7 @@ QSftpFileEngineHandler::QSftpFileEngineHandler(QSftpPromptCallback cb)
   ssh_threads_set_callbacks(&qthread_cbs);
 #else
   ssh_threads_set_callbacks(ssh_threads_get_pthread());
+#endif
 #endif
   ssh_init();
 }
@@ -90,5 +93,5 @@ QAbstractFileEngine* QSftpFileEngineHandler::create(const QString& fileName) con
   if(ssh.isNull()) return NULL;     // Couldn't build an ssh session
   if(ssh->connect())
     ssh->auth(prompt);
-  return new QSftpFileEngine(ssh, path);
+  return new QSftpFileEngine(ssh, user + '@' + host, path);
 }

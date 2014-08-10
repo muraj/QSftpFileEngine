@@ -1,5 +1,6 @@
 #include "QSftpEntryIterator.h"
 #include "QSftpSession.h"
+#include <QDebug>
 #include <string>
 #include <libssh/sftp.h>
 
@@ -21,7 +22,7 @@ QSftpEntryIterator::~QSftpEntryIterator() {
 }
 
 bool QSftpEntryIterator::hasNext() const {
-  return sftp_dir_eof(dir);
+  return dir && sftp_dir_eof(dir) == 0;
 }
 
 QString QSftpEntryIterator::next() {
@@ -31,6 +32,7 @@ QString QSftpEntryIterator::next() {
     attrs = NULL;
   }
   attrs = sftp_readdir(session->sftpSession(), dir);
+  qDebug() << dir->name << '/' << currentFileName();
   return currentFileName();
 }
 

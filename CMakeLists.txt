@@ -14,7 +14,7 @@ find_package(Qt4 REQUIRED QtCore QtGui)
 include(${QT_USE_FILE})
 include_directories(${PROJECT_BINARY_DIR})
 
-find_package(LIBSSH REQUIRED)
+find_package(LIBSSH REQUIRED COMPONENTS threads)
 include_directories(${LIBSSH_INCLUDE_DIRS})
 
 set(qsftp_UI

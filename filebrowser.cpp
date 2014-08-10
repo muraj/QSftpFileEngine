@@ -17,8 +17,8 @@ FileBrowser::FileBrowser(const QString& path, QWidget *parent) :
     QString p = (path.isEmpty() ? QDir::homePath() : path);
     ui->lineEdit->setText(p);
     model->setRootPath(ui->lineEdit->text());
-    for(int i=1;i<model->columnCount();i++)
-        ui->treeView->hideColumn(i);
+    //for(int i=1;i<model->columnCount();i++)
+    //    ui->treeView->hideColumn(i);
     on_lineEdit_returnPressed();
 }
 

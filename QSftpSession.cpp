@@ -5,8 +5,10 @@
 #include <iostream>
 #include <QString>
 #include <QDebug>
+#include <QMutex>
+#include <QMutexLocker>
 
-QSftpSession::QSftpSession(const QString& user, const QString& host) : authed(false), sftp(NULL) {
+QSftpSession::QSftpSession(const QString& user, const QString& host) : authed(false), sftp(NULL), _mutex(new QMutex()) {
   ssh = ssh_new();
 
   std::string hostname = host.toStdString();
@@ -17,16 +19,22 @@ QSftpSession::QSftpSession(const QString& user, const QString& host) : authed(fa
 }
 
 QSftpSession::~QSftpSession() {
-  if(sftp)
+  if(sftp) {
     sftp_free(sftp);
+    sftp = NULL;
+  }
   if(ssh) {
     if(ssh_is_connected(ssh))
       ssh_disconnect(ssh);
     ssh_free(ssh);
+    ssh = NULL;
   }
+  delete _mutex;
+  _mutex = NULL;
 }
 
 bool QSftpSession::connect() {
+  QMutexLocker locker(_mutex);
   if(ssh_is_connected(ssh)) return true;
   qDebug() << "Connecting to host...";
   return ssh_connect(ssh) == SSH_OK;
@@ -63,6 +71,7 @@ static int authInteractive(ssh_session session, bool (*prompt_cb)(const char*, c
 }
 
 bool QSftpSession::auth(bool (*prompt_cb)(const char*, char*, size_t, bool)) {
+  QMutexLocker locker(_mutex);
   if(authed) return true;
   qDebug() << "Trying host-based auth...";
   if(ssh_userauth_none(ssh, NULL) == SSH_AUTH_SUCCESS) return true;
@@ -83,7 +92,9 @@ bool QSftpSession::auth(bool (*prompt_cb)(const char*, char*, size_t, bool)) {
 }
 
 bool QSftpSession::startSftp() {
-  if(sftp) sftp_free(sftp);
+  QMutexLocker locker(_mutex);
+  if(sftp) return true;
+  qDebug() << "Building an sftp session";
   sftp = sftp_new(ssh);
   return sftp_init(sftp) != SSH_OK;
 }
