@@ -18,6 +18,8 @@
 #ifndef QSFTPFILEENGINE_H
 #define QSFTPFILEENGINE_H
 
+#include "qsftp_export.h"
+
 #include <QAbstractFileEngine>
 #include <QMap>
 #include <QSharedPointer>
@@ -26,7 +28,7 @@ class QSftpSession;
 struct sftp_attributes_struct;
 struct sftp_file_struct;
 
-class QSftpFileEngine : public QAbstractFileEngine {
+class QSFTP_EXPORT QSftpFileEngine : public QAbstractFileEngine {
 public:
   QSftpFileEngine(const QSharedPointer<QSftpSession>& _ssh, const QString& hostString, const QString& fileName);
   virtual ~QSftpFileEngine();

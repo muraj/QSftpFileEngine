@@ -18,6 +18,7 @@
 #ifndef QSFTPSESSION_H
 #define QSFTPSESSION_H
 
+#include "qsftp_export.h"
 #include <cstdlib>
 
 struct sftp_session_struct;
@@ -25,7 +26,7 @@ struct ssh_session_struct;
 class QString;
 class QMutex;
 
-class QSftpSession {
+class QSFTP_NO_EXPORT QSftpSession {
 public:
   QSftpSession(const QString& user, const QString& host);
   ~QSftpSession();

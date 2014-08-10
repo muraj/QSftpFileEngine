@@ -15,6 +15,8 @@
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with QSftpFileEngine.  If not, see <http://www.gnu.org/licenses/>.
 
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+
 set(qsftpfs_HDRS
   QSftpFileEngineHandler.h
   QSftpFileEngine.h
@@ -28,4 +30,20 @@ set(qsftpfs_SRCS
   QSftpSession.cpp
 )
 
+if(EXCLUDE_DEPRECATED)
+  set(NO_BUILD_DEPRECATED DEFINE_NO_DEPRECATED)
+endif()
+
+include(GenerateExportHeader)
+
+add_compiler_export_flags()
+
+# To be used with tests, examples, etc
 add_library(qsftpfs_obj OBJECT ${qsftpfs_SRCS})
+
+add_library(qsftpfss STATIC $<TARGET_OBJECTS:qsftpfs_obj>)
+add_library(qsftpfs SHARED ${qsftpfs_SRCS})
+
+set_target_properties(qsftpfss PROPERTIES COMPILE_FLAGS -DQSFTP_STATIC_DEFINE)
+
+generate_export_header(qsftpfs ${NO_BUILD_DEPRECATED} BASE_NAME QSFTP)

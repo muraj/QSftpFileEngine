@@ -19,10 +19,11 @@
 #define QSFTPFILEENGINEHANDLER_H
 
 #include <QAbstractFileEngineHandler>
+#include "qsftp_export.h"
 
 typedef bool (*QSftpPromptCallback)(const char*, char*, size_t, bool);
 
-class QSftpFileEngineHandler : public QAbstractFileEngineHandler {
+class QSFTP_EXPORT QSftpFileEngineHandler : public QAbstractFileEngineHandler {
 public:
   QSftpFileEngineHandler(QSftpPromptCallback cb = NULL);
   virtual ~QSftpFileEngineHandler();

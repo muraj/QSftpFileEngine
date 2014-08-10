@@ -35,9 +35,10 @@ include_directories(${LIBSSH_INCLUDE_DIRS})
 add_definitions(${LIBSSH_DEFINITIONS})
 
 add_subdirectory(src)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 option(BUILD_EXAMPLES "Enable building of examples" ON)
 if(BUILD_EXAMPLES)
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
+  include_directories(${CMAKE_CURRENT_BINARY_DIR}/src)
   add_subdirectory(example)
 endif()
