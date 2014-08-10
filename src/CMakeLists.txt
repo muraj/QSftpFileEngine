@@ -47,3 +47,11 @@ add_library(qsftpfs SHARED ${qsftpfs_SRCS})
 set_target_properties(qsftpfss PROPERTIES COMPILE_FLAGS -DQSFTP_STATIC_DEFINE)
 
 generate_export_header(qsftpfs ${NO_BUILD_DEPRECATED} BASE_NAME QSFTP)
+
+install(TARGETS qsftpfs qsftpss
+    RUNTIME DESTINATION bin
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib)
+
+install(FILES ${qsftp_HDRS} ${CMAKE_CURRENT_BINARY_DIR}/qsftp_export.h
+    DESTINATION include)
