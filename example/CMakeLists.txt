@@ -19,16 +19,13 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 set(qsftpfs_UI
   filebrowser.ui
-  logindialog.ui
 )
 set(qsftpfs_MOC_HDRS
   filebrowser.h
-  logindialog.h
 )
 set(qsftpfs_SRCS
   main.cpp
   filebrowser.cpp
-  logindialog.cpp
 )
 
 QT4_WRAP_CPP(qsftpfs_MOC_SRCS ${qsftpfs_MOC_HDRS})
