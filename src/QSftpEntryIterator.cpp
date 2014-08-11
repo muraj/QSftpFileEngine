@@ -20,10 +20,12 @@
 #include <QDebug>
 #include <string>
 #include <libssh/sftp.h>
+#include <QMutexLocker>
 
 QSftpEntryIterator::QSftpEntryIterator(QSharedPointer<QSftpSession> ssh, const QString& path, QDir::Filters filters, const QStringList& nameFilters) 
   : QAbstractFileEngineIterator(filters, nameFilters), session(ssh), attrs(NULL) {
   std::string path_str(path.toStdString());
+  QMutexLocker locker(session->mutex());
   dir = sftp_opendir(session->sftpSession(), path_str.c_str());
 }
 
@@ -48,7 +50,10 @@ QString QSftpEntryIterator::next() {
     sftp_attributes_free(attrs);
     attrs = NULL;
   }
-  attrs = sftp_readdir(session->sftpSession(), dir);
+  {
+    QMutexLocker locker(session->mutex());
+    attrs = sftp_readdir(session->sftpSession(), dir);
+  }
   qDebug() << dir->name << '/' << currentFileName();
   return currentFileName();
 }

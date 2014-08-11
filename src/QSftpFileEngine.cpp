@@ -51,6 +51,9 @@ QStringList QSftpFileEngine::entryList(QDir::Filters filters, const QStringList&
   return ret;
 }
 
+bool QSftpFileEngine::atEnd() const {
+  return pos() == size();
+}
 
 QAbstractFileEngine::Iterator* QSftpFileEngine::beginEntryList(QDir::Filters filters,
     const QStringList& filterNames) {
@@ -126,6 +129,7 @@ QDateTime QSftpFileEngine::fileTime(QAbstractFileEngine::FileTime time) const {
 
 bool QSftpFileEngine::open(QIODevice::OpenMode mode) {
   std::string p(path.toStdString());
+  qDebug() << "Opening remote file:" << path;
   int accessType;
   if(mode.testFlag(QIODevice::ReadOnly))
     accessType |= O_RDONLY;
@@ -137,6 +141,7 @@ bool QSftpFileEngine::open(QIODevice::OpenMode mode) {
     accessType |= O_TRUNC;
   QMutexLocker locker(host->mutex());
   file = sftp_open(host->sftpSession(), p.c_str(), accessType, 0);
+  qDebug() << "File is: " << file;
   if(file == NULL)
     setError(QFile::ResourceError, host->getSftpError());
   return file != NULL;
@@ -177,12 +182,16 @@ uint QSftpFileEngine::ownerId(QAbstractFileEngine::FileOwner own) const {
 
 qint64 QSftpFileEngine::pos() const {
   QMutexLocker locker(host->mutex());
-  return sftp_tell64(file);
+  qint64 ret = sftp_tell64(file);
+  qDebug() << "Returing file position" << ret;
+  return ret;
 }
 
 qint64 QSftpFileEngine::read(char* data, qint64 maxlen) {
+  qDebug() << "Reading bytes from file: " << path;
   QMutexLocker locker(host->mutex());
   int ret = sftp_read(file, data, maxlen);
+  qDebug() << "Read" << ret << "bytes";
   if(ret < 0)
     setError(QFile::ResourceError, host->getSftpError());
   return ret;
@@ -210,7 +219,7 @@ bool QSftpFileEngine::rename(const QString& newName) {
 }
 
 bool QSftpFileEngine::isRelativePath() const {
-  return !path.isEmpty() && path[0] == '/';
+  return !path.isEmpty() && path[0] != '/';
 }
 
 bool QSftpFileEngine::seek(qint64 pos) {

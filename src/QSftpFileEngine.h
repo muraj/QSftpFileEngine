@@ -34,6 +34,7 @@ public:
   virtual ~QSftpFileEngine();
   bool caseSensitive() const { return true; }
   QStringList entryList(QDir::Filters, const QStringList& fileName) const;
+  bool atEnd() const;
   QAbstractFileEngine::Iterator* beginEntryList(QDir::Filters filters,
       const QStringList& filterNames);
   bool close();
@@ -48,7 +49,7 @@ public:
   bool flush() { return true; }
   //int handle() const;
   bool isRelativePath() const;
-  bool isSequential() const { return true; }
+  bool isSequential() const { return false; }
   //bool link(const QString& newName);
   //bool mkdir(const QString& name, bool createParentDirectories) const;
   bool open(QIODevice::OpenMode mode);
