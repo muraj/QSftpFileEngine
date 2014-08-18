@@ -230,6 +230,15 @@ bool QSftpFileEngine::seek(qint64 pos) {
   return ret == 0;
 }
 
+bool QSftpFileEngine::setPermissions(uint perms) {
+  QMutexLocker locker(host->mutex());
+  std::string p(path.toStdString());
+  int ret = sftp_chmod(host->sftpSession(), p.c_str(), perms);
+  if(ret != 0)
+    setError(QFile::ResourceError, host->getSftpError());
+  return ret == 0;
+}
+
 qint64 QSftpFileEngine::size() const {
   return getAttrs()->size;
 }

@@ -62,7 +62,7 @@ public:
   //bool rmdir(const QString& name, bool recurseParentDirectories) const;
   bool seek(qint64 pos);
   //void setFileName(const QString& file);
-  //bool setPermissions(uint perms);
+  bool setPermissions(uint perms);
   bool setSize(qint64 size) { return false; }
   qint64 size() const;
   bool supportsExtension(QAbstractFileEngine::Extension extension) const { return false; }
