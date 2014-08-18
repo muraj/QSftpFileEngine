@@ -97,6 +97,7 @@ QString QSftpFileEngine::fileName(QAbstractFileEngine::FileName fileflags) const
     case QAbstractFileEngine::CanonicalPathName:
       ret = absPath.section('/', 0, -2);
       break;
+    default: break;
     }
     break;
   }
