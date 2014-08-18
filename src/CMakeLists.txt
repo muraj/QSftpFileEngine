@@ -38,11 +38,8 @@ include(GenerateExportHeader)
 
 add_compiler_export_flags()
 
-# To be used with tests, examples, etc
-add_library(qsftpfs_obj OBJECT ${qsftpfs_SRCS})
-set_target_properties(qsftpfs_obj PROPERTIES COMPILE_FLAGS -DQSFTP_STATIC_DEFINE)
-
-add_library(qsftpfss STATIC $<TARGET_OBJECTS:qsftpfs_obj>)
+add_library(qsftpfss STATIC ${qsftpfs_SRCS})
+set_target_properties(qsftpfss PROPERTIES COMPILE_FLAGS -DQSFTP_STATIC_DEFINE)
 
 add_library(qsftpfs SHARED ${qsftpfs_SRCS})
 target_link_libraries(qsftpfs ${LIBSSH_LIBRARIES} ${QT_QTCORE_LIBRARY})

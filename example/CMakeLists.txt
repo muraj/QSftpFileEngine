@@ -31,7 +31,7 @@ set(qsftpfs_SRCS
 QT4_WRAP_CPP(qsftpfs_MOC_SRCS ${qsftpfs_MOC_HDRS})
 QT4_WRAP_UI(qsftpfs_UI_SRCS ${qsftpfs_UI})
 
-add_executable(filebrowser $<TARGET_OBJECTS:qsftpfs_obj> ${qsftpfs_SRCS} ${qsftpfs_MOC_SRCS} ${qsftpfs_UI_SRCS})
+add_executable(filebrowser ${qsftpfs_SRCS} ${qsftpfs_MOC_SRCS} ${qsftpfs_UI_SRCS})
 
-target_link_libraries(filebrowser
+target_link_libraries(filebrowser qsftpfss
     ${QT_LIBRARIES} ${LIBSSH_LIBRARIES})

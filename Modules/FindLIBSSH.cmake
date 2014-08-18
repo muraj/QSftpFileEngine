@@ -45,7 +45,7 @@ set(LIBSSH_INCLUDE_DIRS ${LIBSSH_INCLUDE_DIR})
 set(LIBSSH_VERSION "${PC_LIBSSH_VERSION}")
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(LIBSSH FOUND_VAR LIBSSH_FOUND
+find_package_handle_standard_args(LIBSSH
   REQUIRED_VARS LIBSSH_LIBRARIES LIBSSH_INCLUDE_DIRS
   VERSION_VAR LIBSSH_VERSION)
 

@@ -98,7 +98,11 @@ bool QSftpSession::auth(bool (*prompt_cb)(const char*, char*, size_t, bool)) {
   if((method & SSH_AUTH_METHOD_HOSTBASED) &&
       ssh_userauth_none(ssh, NULL) == SSH_AUTH_SUCCESS);
   else if((method & SSH_AUTH_METHOD_PUBLICKEY) &&
+#if LIBSSH_VERSION_MINOR < 6
+      ssh_userauth_autopubkey(ssh, NULL) == SSH_AUTH_SUCCESS);
+#else
       ssh_userauth_publickey_auto(ssh, NULL, NULL) == SSH_AUTH_SUCCESS);
+#endif
   else if((method & SSH_AUTH_METHOD_PASSWORD) &&
       authPassword(ssh, prompt_cb) == SSH_AUTH_SUCCESS);
   else if((method & SSH_AUTH_METHOD_INTERACTIVE) &&
