@@ -129,6 +129,7 @@ QDateTime QSftpFileEngine::fileTime(QAbstractFileEngine::FileTime time) const {
 }
 
 bool QSftpFileEngine::open(QIODevice::OpenMode mode) {
+  if(file != NULL) this->close();
   std::string p(path.toStdString());
   qDebug() << "Opening remote file:" << path;
   int accessType;
@@ -155,6 +156,21 @@ bool QSftpFileEngine::close() {
   else
     setError(QFile::ResourceError, host->getSftpError());
   return ret == SSH_NO_ERROR;
+}
+
+bool QSftpFileEngine::copy(const QString& copyName) {
+  static char buffer[1024] = {0};
+  if(!this->open(QIODevice::ReadOnly)) return false;
+  QFile dest(copyName);
+  if(dest.exists()) return false;
+  if(!dest.open(QIODevice::WriteOnly | QIODevice::Truncate))
+    return false;
+  while(!this->atEnd()) {
+    qint64 bytes = this->read(buffer, sizeof(buffer));
+    if(dest.write(buffer, bytes) != bytes)
+      return false;
+  }
+  return this->close();
 }
 
 QString QSftpFileEngine::owner(QAbstractFileEngine::FileOwner own) const {
@@ -246,7 +262,7 @@ qint64 QSftpFileEngine::size() const {
 
 qint64 QSftpFileEngine::write(const char* data, qint64 len) {
   QMutexLocker locker(host->mutex());
-  ssize_t ret =  sftp_write(file, data, len);
+  ssize_t ret = sftp_write(file, data, len);
   if(ret < 0)
     setError(QFile::ResourceError, host->getSftpError());
   return ret;

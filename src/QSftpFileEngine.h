@@ -38,7 +38,7 @@ public:
   QAbstractFileEngine::Iterator* beginEntryList(QDir::Filters filters,
       const QStringList& filterNames);
   bool close();
-  //bool copy(const QString& copyName);
+  bool copy(const QString& copyName);
   bool extension(QAbstractFileEngine::Extension ext,
       const QAbstractFileEngine::ExtensionOption* option = 0,
       const QAbstractFileEngine::ExtensionReturn* output = 0) { return false; }
